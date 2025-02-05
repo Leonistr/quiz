@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+        // 🔹 Вставь свои данные Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA0JQp2C6LFeKVnaogjdXRKJJiwlfPjYy4",
+            authDomain: "ekeb-14711.firebaseapp.com",
+            projectId: "ekeb-14711",
+            storageBucket: "ekeb-14711.firebasestorage.app",
+            messagingSenderId: "344039659889",
+            appId: "1:344039659889:web:ef6a68a841db89b51c3ed0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function submitQuiz() {
+            let name = document.getElementById("name").value;
+            let score = Math.floor(Math.random() * 100);  // 🔹 Генерируем случайный балл (замени на реальный)
+
+            await addDoc(collection(db, "quiz_results"), { 
+                name, 
+                score, 
+                timestamp: Date.now() 
+            });
+
+            alert("Результат отправлен!");
+        }
+
+        async function showLeaderboard() {
+            const q = query(collection(db, "quiz_results"), orderBy("score", "desc"));
+            const querySnapshot = await getDocs(q);
+
+            let leaderboard = "";
+            querySnapshot.forEach((doc) => {
+                leaderboard += `${doc.data().name}: ${doc.data().score} <br>`;
+            });
+
+            document.getElementById("leaderboard").innerHTML = leaderboard;
+        }
+
+        window.submitQuiz = submitQuiz;
+        window.showLeaderboard = showLeaderboard;
+    </script>
+</head>
+<body>
+    <h1>Информатика Quiz</h1>
+    <input type="text" id="name" placeholder="Введите имя">
+    <button onclick="submitQuiz()">Отправить</button>
+
+    <h2>Leaderboard</h2>
+    <button onclick="showLeaderboard()">Обновить рейтинг</button>
+    <div id="leaderboard"></div>
+</body>
+</html>

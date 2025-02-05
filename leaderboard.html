@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard</title>
+    <meta http-equiv="refresh" content="5">  <!-- Автообновление каждые 5 сек -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA0JQp2C6LFeKVnaogjdXRKJJiwlfPjYy4",
+            authDomain: "ekeb-14711.firebaseapp.com",
+            projectId: "ekeb-14711",
+            storageBucket: "ekeb-14711.firebasestorage.app",
+            messagingSenderId: "344039659889",
+            appId: "1:344039659889:web:ef6a68a841db89b51c3ed0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function showLeaderboard() {
+            const q = query(collection(db, "quiz_results"), orderBy("score", "desc"));
+            const querySnapshot = await getDocs(q);
+
+            let leaderboard = "";
+            querySnapshot.forEach((doc, index) => {
+                leaderboard += `<p><strong>${index + 1}. ${doc.data().name}</strong>: ${doc.data().score} очков</p>`;
+            });
+
+            document.getElementById("leaderboard").innerHTML = leaderboard;
+        }
+
+        showLeaderboard();
+        setInterval(showLeaderboard, 5000);  // 🔹 Обновление каждые 5 секунд
+    </script>
+</head>
+<body>
+    <h1>Текущий рейтинг</h1>
+    <div id="leaderboard"></div>
+</body>
+</html>
