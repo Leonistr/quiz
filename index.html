@@ -126,5 +126,71 @@
             }
         }
     </script>
+    <script type="module">
+    // Импорт Firebase SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Конфигурация Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyA0JQp2C6LFeKVnaogjdXRKJJiwlfPjYy4",
+        authDomain: "ekeb-14711.firebaseapp.com",
+        projectId: "ekeb-14711",
+        storageBucket: "ekeb-14711.appspot.com",
+        messagingSenderId: "344039659889",
+        appId: "1:344039659889:web:ef6a68a841db89b51c3ed0",
+        measurementId: "G-JJDG0K5VYR"
+    };
+
+    // Инициализация Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let userName = "";
+    let userGroup = "";
+    let score = 0;
+
+    window.startQuiz = function () {
+        userName = document.getElementById("name").value;
+        userGroup = document.getElementById("group").value;
+
+        if (userName.trim() === "") {
+            alert("Введите имя");
+            return;
+        }
+
+        document.getElementById("start-container").style.display = "none";
+        document.getElementById("quiz-container").style.display = "block";
+        loadQuestion();
+    };
+
+    window.checkAnswer = function (selected) {
+        if (selected === quizData[currentQuestion].correct) {
+            score++;
+        }
+        currentQuestion++;
+
+        if (currentQuestion < quizData.length) {
+            loadQuestion();
+        } else {
+            saveResultToFirebase();
+        }
+    };
+
+    async function saveResultToFirebase() {
+        try {
+            await addDoc(collection(db, "quiz_results"), {
+                name: userName,
+                group: userGroup,
+                score: score,
+                timestamp: new Date()
+            });
+
+            document.getElementById("question-container").innerHTML = `<h2>${userName} (${userGroup}), вы набрали ${score} из ${quizData.length}!</h2>`;
+        } catch (e) {
+            console.error("Ошибка при сохранении:", e);
+        }
+    }
+</script>
 </body>
 </html>
