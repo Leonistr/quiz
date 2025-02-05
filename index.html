@@ -45,7 +45,18 @@
     </style>
 </head>
 <body>
-    <div class="quiz-container">
+    <div class="quiz-container" id="start-container">
+        <h1>Введите свои данные</h1>
+        <input type="text" id="name" placeholder="Ваше имя">
+        <select id="group">
+            <option value="106">106</option>
+            <option value="107">107</option>
+            <option value="209">209</option>
+        </select>
+        <button onclick="startQuiz()">Начать</button>
+    </div>
+
+    <div class="quiz-container" id="quiz-container" style="display: none;">
         <h1>Информатика Quiz</h1>
         <div id="question-container">
             <p class="question" id="question"></p>
@@ -70,6 +81,22 @@
 
         let currentQuestion = 0;
         let score = 0;
+        let userName = "";
+        let userGroup = "";
+
+        function startQuiz() {
+            userName = document.getElementById("name").value;
+            userGroup = document.getElementById("group").value;
+
+            if (userName.trim() === "") {
+                alert("Введите имя");
+                return;
+            }
+            
+            document.getElementById("start-container").style.display = "none";
+            document.getElementById("quiz-container").style.display = "block";
+            loadQuestion();
+        }
 
         function loadQuestion() {
             const questionElement = document.getElementById("question");
@@ -95,11 +122,9 @@
             if (currentQuestion < quizData.length) {
                 loadQuestion();
             } else {
-                document.getElementById("question-container").innerHTML = "<h2>Вы набрали " + score + " из " + quizData.length + "!</h2>";
+                document.getElementById("question-container").innerHTML = `<h2>${userName} (${userGroup}), вы набрали ${score} из ${quizData.length}!</h2>`;
             }
         }
-
-        loadQuestion();
     </script>
 </body>
 </html>
