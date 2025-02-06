@@ -43,7 +43,10 @@ const Quiz = () => {
   };
 
   return (
-    <div className={`flex flex-col items-center justify-center min-h-screen p-4 transition-all duration-500 ${feedback === "correct" ? "bg-green-100" : feedback === "incorrect" ? "bg-red-100" : "bg-gray-100"}`}>
+    <div className={`flex flex-col items-center justify-center min-h-screen p-4 transition-all duration-500 relative ${feedback === "correct" ? "bg-green-100" : feedback === "incorrect" ? "bg-red-100" : "bg-gray-100"}`}>
+      {feedback && (
+        <div className={`absolute inset-0 transition-opacity duration-500 ${feedback === "correct" ? "bg-green-500/30" : "bg-red-500/30"}`}></div>
+      )}
       <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-xl relative">
         {loading ? (
           <div className="text-center text-lg font-bold animate-pulse">Загрузка...</div>
@@ -55,14 +58,13 @@ const Quiz = () => {
                 <button
                   key={index}
                   onClick={() => handleAnswer(option)}
-                  className="bg-blue-500 text-white py-2 rounded-lg text-lg hover:bg-blue-600 transition-all relative"
+                  className={`bg-blue-500 text-white py-2 rounded-lg text-lg hover:bg-blue-600 transition-all relative flex justify-center items-center w-full h-14 sm:h-16 text-center`}
                 >
                   {option}
-                  {feedback && option === questions[questionIndex].answer && (
-                    <span className="absolute top-0 right-0 text-green-500 text-2xl">✔</span>
-                  )}
-                  {feedback && option !== questions[questionIndex].answer && feedback === "incorrect" && (
-                    <span className="absolute top-0 right-0 text-red-500 text-2xl">✖</span>
+                  {feedback && (
+                    <span className={`absolute right-2 text-2xl transition-opacity duration-500 ${option === questions[questionIndex].answer ? "text-green-500" : feedback === "incorrect" && option !== questions[questionIndex].answer ? "text-red-500" : ""}`}>
+                      {option === questions[questionIndex].answer ? "✔" : feedback === "incorrect" && option !== questions[questionIndex].answer ? "✖" : ""}
+                    </span>
                   )}
                 </button>
               ))}
